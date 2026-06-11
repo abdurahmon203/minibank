@@ -33,3 +33,38 @@ class Wallet(models.Model):
 
     def __str__(self):
         return self.wallet_number
+
+
+class BankCard(models.Model):
+
+    class CardType(models.TextChoices):
+        VISA = "VISA", "VISA"
+        MASTERCARD = "MASTERCARD", "MASTERCARD"
+        KORTI_MILLI = "KORTI_MILLI", "KORTI_MILLI"
+        OTHER = "OTHER", "OTHER"
+
+    class StatusChoices(models.TextChoices):
+        ACTIVE = "ACTIVE", "ACTIVE"
+        BLOCKED = "BLOCKED", "BLOCKED"
+        EXPIRED = "EXPIRED", "EXPIRED"
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="cards")
+
+    card_holder = models.CharField(max_length=255)
+
+    masked_pan = models.CharField(max_length=25)
+
+    card_type = models.CharField(max_length=20, choices=CardType.choices)
+
+    expire_month = models.PositiveSmallIntegerField()
+
+    expire_year = models.PositiveIntegerField()
+
+    status = models.CharField(
+        max_length=20, choices=StatusChoices.choices, default=StatusChoices.ACTIVE
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.masked_pan
